@@ -1,0 +1,9 @@
+Deletando um campo da collection selecionada
+db.estados.remove({sigla: "AC"})
+
+
+Deletando apenas um registro
+db.estados.remove({populacao. {$exists: true}}, 1)
+
+Deletando os campos que possuem população menor ou igual a 20000000
+db.estados.remove({populacao: {$lt: 20000000}})

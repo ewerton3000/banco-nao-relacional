@@ -1,0 +1,13 @@
+Comando update:
+
+ db.estados.update({sigla:"SP"},{$set: {populacao: 4534000}})
+
+  db.estados.update({sigla: "AL"},{$set: {cidades: [{nome: "Sergipe"}]}})
+
+  Usando o operador $push:
+db.estados.update(
+{sigla: "SP"},
+{$push: {cidades: {nome: "Santos" , populacao: 4333966}}}
+)
+
+db.estados.find({populacao: {$exists: true}}, {_id: 0, nome: 1})

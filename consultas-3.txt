@@ -1,0 +1,31 @@
+Usando o $match:
+
+db.estados.aggregate([
+    {$match: {"cidades.nome": "Sorocaba"} },
+])
+
+Imprimindo melhor o $match com o pretty()
+db.estados.aggregate([
+    {$match: {"cidades.nome": "Sorocaba"} },
+]).pretty()
+
+Usando o $unwind(desenrolar)
+db.estados.aggregate([
+    { $match: {"cidades.nome": "Sorocaba"} },
+    {$unwind: "$cidades"},
+]).pretty()
+
+Puxando apenas o campo(linha) selecionado
+db.estados.aggregate([
+    {$match: {"cidades.nome": "Sorocaba"} },
+    {$unwind:"$cidades"},
+    {$match:{"cidades.nome": "Sorocaba"} } ,
+]).pretty()
+
+Puxando o id selecionado
+db.estados.aggregate([
+    {$match: {"cidades.nome": "Sorocaba"} },
+    {$unwind:"$cidades"},
+    {$match:{"cidades.nome": "Sorocaba"} } ,
+    {$project: {id: "$cidades._id"} }
+]).pretty()

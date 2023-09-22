@@ -1,0 +1,98 @@
+db.empresas.aggregate([
+    {$match: {nome: "Bradesco"}},
+]).pretty()
+
+Fazendo o lookup
+db.empresas.aggregate([
+    {$match: {nome: "Bradesco"}},
+    {$lookup : {
+     from: "estados",
+     localField: "estadoId",
+     foreignField:"_id",
+     as:"estado"
+    }},
+]).pretty()
+
+Usando o operador $unwind e $lookup com aggregate:
+db.empresas.aggregate([
+    {$match: {nome: "Bradesco"}},
+    {$lookup: {
+        from: "estados",
+        localField: "estadoId",
+        foreignField: "_id",
+        as: "estado"
+    }},
+    {$unwind: "$estado"},
+]).pretty()
+
+usando o $match com a empresas
+db.empresas.aggregate([
+    {$match: {nome: "Vale"}},
+]).pretty()
+
+Usando o $lookup para relacionar a empresa com os estados pelo  campo cidadeid:
+db.empresas.aggregate([
+    {$match: {nome: "Vale"}},
+    {$lookup: {
+        from: "estados",
+        localField: "cidadeId",
+        foreignField: "cidades._id",
+        as: "estado"
+    }}
+]).pretty()
+
+Usando o $unwind
+db.empresas.aggregate([
+    {$match: {nome: "Vale"}},
+    {$lookup: {
+        from:"estados",
+        localField :"cidadeId",
+        foreignField: "cidades._id",
+        as:"estado"
+    }},
+    {$unwind: "$estado"},
+]).pretty()
+
+Usando o $unwind para mostrar o array com a empresa ,estado e com suas cidades 
+correspondentes separadas uma da outra:
+db.empresas.aggregate([
+    {$match: {nome: "Vale"}},
+    {$lookup: {
+        from: "estados",
+        localField: "cidadeId",
+        foreignField: "cidades._id",
+        as:"estado"
+    }},
+    {$unwind: "$estado"},
+    {$unwind: "$estado.cidades"},
+]).pretty()
+
+Comparando as cidades do estado com as cidadeid com o operador $addFields:
+db.empresas.aggregate([
+    {$match: {nome: "Vale"}},
+    {$lookup: {
+        from:"estados",
+        localField: "cidadeId",
+        foreignField: "cidades._id",
+        as:"estado"
+    }},
+    {$unwind:"$estado"},
+    {$unwind: "$estado.cidades"},
+    {$addFields: {mesmaCidade: {$cmp: ["$estado.cidades._id", "$cidadeId"]} } },
+]).pretty()
+
+
+Usando o $match para conseguir pegar a mesmaCidade = 0:
+db.empresas.aggregate([
+    {$match: {nome: "Vale"}},
+    {$lookup: {
+        from:"estados",
+        localField: "cidadeId",
+        foreignField: "cidades._id",
+        as:"estado"
+    }},
+    {$unwind:"$estado"},
+    {$unwind: "$estado.cidades"},
+    {$addFields: {mesmaCidade: {$cmp: ["$estado.cidades._id", "$cidadeId"]} } },
+    {$match: {mesmaCidade: 0}},
+]).pretty()

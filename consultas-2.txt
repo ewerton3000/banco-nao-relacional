@@ -1,0 +1,37 @@
+CONSULTAS AGREGADAS:
+
+
+db.estados.aggregate([
+    {$project: {nome: 1, "cidades.nome": 1, _id: 0}}
+])
+
+db.estados.aggregate([
+    {$project: {nome: 1, "estados.nome": 1, _id: 0}}
+])
+
+db.estados.aggregate([
+    {$project : {populacao: {$sum: "$cidades.populacao"}, sigla: 0 , _id:0} } 
+])
+
+Somando a populacao: Utilizando o $sum para somar o total da populacao
+db.estados.aggregate([
+    {$project : {populacao: {$sum: "$cidades.populacao"}, sigla: 0, _id:0} } 
+])
+
+Agrupando as populações:
+db.estados.aggregate([
+    {$project : {populacao: {$sum: "$cidades.populacao"}, sigla: 1 , _id:0} } ,
+    {$group : {_id: null , populacaoTotal: {$sum: "$populacao" }  }  },
+])
+
+db.estados.aggregate([
+    {$project : {populacao: {$sum: "$cidades.populacao"}, sigla: 1 , _id:0} } ,
+    {$group : {_id: 0 , populacaoTotal: {$sum: "$populacao" }  }  },
+])
+
+Agrupando as soma da populações sem mostrar a id:
+db.estados.aggregate([
+{ $project: {populacao: {$sum: "$cidades.populacao"}, sigla: 1, _id: 0} },
+{ $group: {_id: null, populacaoTotal: {$sum: "$populacao" }} },
+{ $project: { _id: 0, populacaoTotal: 1} },
+])
